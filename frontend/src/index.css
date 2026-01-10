@@ -7,7 +7,14 @@
 }
 
 * {
+  -ms-overflow-style: none; /* IE và Edge */
   font-family: "Inter", sans-serif;
+  /* Ẩn scrollbar nhưng vẫn giữ khả năng scroll */
+  scrollbar-width: none; /* IE và Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 a.active hr {
