@@ -4,8 +4,8 @@ import { ShopContext } from "../context/ShopContext";
 
 // Component hiển thị một sản phẩm trong danh sách
 const ProductItem = ({ id, image, name, price }) => {
-  // Lấy đơn vị tiền tệ từ context
-  const { currency } = useContext(ShopContext);
+  // Lấy hàm format giá từ context
+  const { formatPrice } = useContext(ShopContext);
 
   return (
     <div>
@@ -23,11 +23,8 @@ const ProductItem = ({ id, image, name, price }) => {
         {/* Tên sản phẩm */}
         <p className="pt-3 pb-1 text-sm">{name}</p>
 
-        {/* Giá sản phẩm */}
-        <p className="font-medium text-sm">
-          {currency}
-          {price}
-        </p>
+        {/* Giá sản phẩm - format theo định dạng Việt Nam */}
+        <p className="font-medium text-sm">{formatPrice(price)}</p>
       </Link>
     </div>
   );
