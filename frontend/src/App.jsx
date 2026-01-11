@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
@@ -15,6 +16,18 @@ import Product from "./pages/Product";
 function App() {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+      <ToastContainer
+        autoClose={1000}
+        closeOnClick={true}
+        draggable={true}
+        hideProgressBar={false}
+        newestOnTop={true}
+        pauseOnFocusLoss={true}
+        pauseOnHover={true}
+        position="top-right"
+        rtl={false}
+        theme="light"
+      />
       <Navbar />
       <SearchBar />
       <Routes>

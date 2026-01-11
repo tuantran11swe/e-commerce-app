@@ -9,7 +9,7 @@ const Navbar = () => {
   const [visible, setVisible] = useState(false);
 
   // Lấy hàm setShowSearch từ context ShopContext để xử lý hiển thị thanh tìm kiếm khi click vào icon tìm kiếm
-  const { setShowSearch } = useContext(ShopContext);
+  const { setShowSearch, getCartCount } = useContext(ShopContext);
 
   return (
     <div className="flex justify-between items-center py-5 font-medium">
@@ -72,7 +72,7 @@ const Navbar = () => {
           <img alt="" className="w-5 min-w-5" src={assets.cart_icon} />
           {/* Badge số lượng sản phẩm trong giỏ hàng - hiển thị ở dưới icon */}
           <p className="right-[-5px] bottom-[-5px] absolute flex justify-center items-center bg-black rounded-full w-4 aspect-square text-[8px] text-white text-center leading-4">
-            0
+            {getCartCount()}
           </p>
         </Link>
 
