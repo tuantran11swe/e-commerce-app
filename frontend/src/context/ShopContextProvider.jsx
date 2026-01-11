@@ -1,11 +1,8 @@
-import { createContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { products } from "../assets/frontend_assets/assets";
-
-// Tạo context để chia sẻ dữ liệu shop giữa các component trong ứng dụng
-// Context này giúp tránh prop drilling và quản lý state tập trung
-export const ShopContext = createContext();
+import { ShopContext } from "./ShopContext";
 
 // Hàm format giá theo định dạng Việt Nam (dấu chấm phân cách hàng nghìn)
 // Ví dụ: 150000 -> "150.000 ₫"
@@ -22,7 +19,7 @@ const ShopContextProvider = (props) => {
   const currency = "₫";
 
   // Phí vận chuyển mặc định (đơn vị: nghìn đồng)
-  const delivery_fee = 10000;
+  const deliveryFee = 10000;
 
   // State quản lý từ khóa tìm kiếm của người dùng
   const [search, setSearch] = useState("");
@@ -147,7 +144,7 @@ const ShopContextProvider = (props) => {
     addToCart, //thêm vào giỏ hàng
     cartItems, //giỏ hàng
     currency, // Đơn vị tiền tệ
-    delivery_fee, // Phí vận chuyển
+    deliveryFee, // Phí vận chuyển
     formatPrice, // Hàm format giá theo định dạng Việt Nam
     getCartAmount, //tổng tiền các sản phẩm trong giỏ hàng
     getCartCount, //tính tổng số lượng sản phẩm trong giỏ hàng

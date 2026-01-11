@@ -69,11 +69,11 @@ const Product = () => {
           {/* Tên sản phẩm */}
           <h1 className="mt-2 font-medium text-2xl">{productData.name}</h1>
           <div className="flex items-center gap-1 mt-2">
-            <img alt="Sao đánh giá" className="w-3.5" src={assets.star_icon} />
-            <img alt="Sao đánh giá" className="w-3.5" src={assets.star_icon} />
-            <img alt="Sao đánh giá" className="w-3.5" src={assets.star_icon} />
-            <img alt="Sao đánh giá" className="w-3.5" src={assets.star_icon} />
-            <img alt="Sao đánh giá" className="w-3.5" src={assets.star_icon} />
+            <img alt="Sao đánh giá" className="w-3.5" src={assets.starIcon} />
+            <img alt="Sao đánh giá" className="w-3.5" src={assets.starIcon} />
+            <img alt="Sao đánh giá" className="w-3.5" src={assets.starIcon} />
+            <img alt="Sao đánh giá" className="w-3.5" src={assets.starIcon} />
+            <img alt="Sao đánh giá" className="w-3.5" src={assets.starIcon} />
             <p className="pl-2">(100)</p>
           </div>
           {/* Giá sản phẩm - format theo định dạng Việt Nam */}

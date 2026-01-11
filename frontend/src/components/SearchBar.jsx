@@ -31,7 +31,7 @@ const SearchBar = () => {
           value={search}
         />
         {/* Icon tìm kiếm */}
-        <img alt="Tìm kiếm" className="w-4" src={assets.search_icon} />
+        <img alt="Tìm kiếm" className="w-4" src={assets.searchIcon} />
       </div>
 
       {/* Nút đóng thanh tìm kiếm */}
@@ -40,7 +40,7 @@ const SearchBar = () => {
         onClick={() => setShowSearch(false)}
         type="button"
       >
-        <img alt="Đóng tìm kiếm" className="w-3" src={assets.cross_icon} />
+        <img alt="Đóng tìm kiếm" className="w-3" src={assets.crossIcon} />
       </button>
     </div>
   ) : null;

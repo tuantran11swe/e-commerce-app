@@ -1,8 +1,8 @@
 import BestSeller from "../components/BestSeller";
 import Hero from "../components/Hero";
 import LatestCollections from "../components/LatestCollections";
-import Newletter from "../components/Newletter";
-import OutPolicy from "../components/OutPolicy";
+import Newsletter from "../components/Newsletter";
+import OurPolicy from "../components/OurPolicy";
 
 const Home = () => {
   return (
@@ -10,8 +10,8 @@ const Home = () => {
       <Hero />
       <LatestCollections />
       <BestSeller />
-      <OutPolicy />
-      <Newletter />
+      <OurPolicy />
+      <Newsletter />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Component đăng ký nhận bản tin newsletter
-const Newletter = () => {
+const Newsletter = () => {
   // State lưu giá trị email người dùng nhập
   const [email, setEmail] = useState("");
 
@@ -53,4 +53,4 @@ const Newletter = () => {
   );
 };
 
-export default Newletter;
+export default Newsletter;

@@ -1,7 +1,7 @@
 import { assets } from "../assets/frontend_assets/assets.js";
 
 // Component hiển thị các chính sách và dịch vụ của cửa hàng
-const OutPolicy = () => {
+const OurPolicy = () => {
   return (
     <div className="flex sm:flex-row flex-col justify-around gap-12 sm:gap-2 py-20 text-gray-700 text-xs sm:text-sm md:text-base text-center">
       {/* Chính sách đổi trả dễ dàng */}
@@ -9,7 +9,7 @@ const OutPolicy = () => {
         <img
           alt="Chính sách đổi trả"
           className="m-auto mb-5 w-12"
-          src={assets.exchange_icon}
+          src={assets.exchangeIcon}
         />
         <p className="font-semibold">Chính Sách Đổi Trả Dễ Dàng</p>
         <p className="text-gray-400">
@@ -22,7 +22,7 @@ const OutPolicy = () => {
         <img
           alt="Chính sách trả hàng"
           className="m-auto mb-5 w-12"
-          src={assets.quality_icon}
+          src={assets.qualityIcon}
         />
         <p className="font-semibold">Chính Sách Trả Hàng 7 Ngày</p>
         <p className="text-gray-400">
@@ -35,7 +35,7 @@ const OutPolicy = () => {
         <img
           alt="Hỗ trợ khách hàng"
           className="m-auto mb-5 w-12"
-          src={assets.support_img}
+          src={assets.supportImg}
         />
         <p className="font-semibold">Hỗ Trợ Khách Hàng Tốt Nhất</p>
         <p className="text-gray-400">
@@ -46,4 +46,4 @@ const OutPolicy = () => {
   );
 };
 
-export default OutPolicy;
+export default OurPolicy;

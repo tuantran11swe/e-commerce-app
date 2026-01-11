@@ -47,16 +47,12 @@ const Navbar = () => {
           onClick={() => setShowSearch(true)}
           type="button"
         >
-          <img alt="Tìm kiếm" className="w-5" src={assets.search_icon} />
+          <img alt="Tìm kiếm" className="w-5" src={assets.searchIcon} />
         </button>
 
         {/* Dropdown menu profile - hiển thị khi hover */}
         <div className="group relative">
-          <img
-            alt=""
-            className="w-5 cursor-pointer"
-            src={assets.profile_icon}
-          />
+          <img alt="" className="w-5 cursor-pointer" src={assets.profileIcon} />
           {/* Menu dropdown xuất hiện khi hover vào icon profile */}
           <div className="hidden group-hover:block right-0 absolute pt-4 dropdown-menu">
             <div className="flex flex-col gap-2 bg-slate-100 px-5 py-3 rounded w-36 text-gray-500">
@@ -69,7 +65,7 @@ const Navbar = () => {
 
         {/* Icon giỏ hàng với badge hiển thị số lượng sản phẩm */}
         <Link className="relative" to="/cart">
-          <img alt="" className="w-5 min-w-5" src={assets.cart_icon} />
+          <img alt="" className="w-5 min-w-5" src={assets.cartIcon} />
           {/* Badge số lượng sản phẩm trong giỏ hàng - hiển thị ở dưới icon */}
           <p className="right-[-5px] bottom-[-5px] absolute flex justify-center items-center bg-black rounded-full w-4 aspect-square text-[8px] text-white text-center leading-4">
             {getCartCount()}
@@ -88,7 +84,7 @@ const Navbar = () => {
               setVisible(true);
             }
           }}
-          src={assets.menu_icon}
+          src={assets.menuIcon}
         />
       </div>
 
@@ -105,7 +101,7 @@ const Navbar = () => {
             onClick={() => setVisible(false)}
             type="button"
           >
-            <img alt="" className="h-4 rotate-180" src={assets.dropdown_icon} />
+            <img alt="" className="h-4 rotate-180" src={assets.dropdownIcon} />
             <p>Quay lại</p>
           </button>
 

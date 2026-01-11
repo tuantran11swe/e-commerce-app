@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo } from "react";
 import { ShopContext } from "../context/ShopContext";
 import ProductItem from "./ProductItem";
 import Title from "./Title";
@@ -7,11 +7,9 @@ import Title from "./Title";
 const RelatedProduct = ({ category, subCategory }) => {
   // Lấy danh sách sản phẩm từ context
   const { products } = useContext(ShopContext);
-  // State lưu danh sách sản phẩm liên quan
-  const [related, setRelated] = useState([]);
 
-  // Effect để lọc và lấy các sản phẩm liên quan khi products, category hoặc subCategory thay đổi
-  useEffect(() => {
+  // Lọc và lấy các sản phẩm liên quan khi products, category hoặc subCategory thay đổi
+  const related = useMemo(() => {
     if (products.length > 0) {
       // Tạo bản sao của mảng products để không làm thay đổi mảng gốc
       let productsCopy = products.slice();
@@ -22,8 +20,9 @@ const RelatedProduct = ({ category, subCategory }) => {
         (item) => subCategory === item.subCategory,
       );
       // Lấy tối đa 5 sản phẩm đầu tiên
-      setRelated(productsCopy.slice(0, 5));
+      return productsCopy.slice(0, 5);
     }
+    return [];
   }, [products, category, subCategory]);
 
   return (

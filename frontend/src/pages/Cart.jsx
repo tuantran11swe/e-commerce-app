@@ -113,11 +113,7 @@ const Cart = () => {
                 }
                 type="button"
               >
-                <img
-                  alt="Xóa"
-                  className="w-full h-full"
-                  src={assets.bin_icon}
-                />
+                <img alt="Xóa" className="w-full h-full" src={assets.binIcon} />
               </button>
             </div>
           );

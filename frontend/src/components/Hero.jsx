@@ -29,7 +29,7 @@ const Hero = () => {
       </div>
 
       {/* Phần bên phải - Hình ảnh hero */}
-      <img alt="Hero" className="w-full sm:w-1/2" src={assets.hero_img} />
+      <img alt="Hero" className="w-full sm:w-1/2" src={assets.heroImg} />
     </div>
   );
 };

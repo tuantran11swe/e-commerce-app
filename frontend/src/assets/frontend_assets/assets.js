@@ -1,13 +1,13 @@
-import about_img from "./about_img.png";
-import bin_icon from "./bin_icon.png";
-import cart_icon from "./cart_icon.png";
-import contact_img from "./contact_img.png";
-import cross_icon from "./cross_icon.png";
-import dropdown_icon from "./dropdown_icon.png";
-import exchange_icon from "./exchange_icon.png";
-import hero_img from "./hero_img.png";
+import aboutImg from "./about_img.png";
+import binIcon from "./bin_icon.png";
+import cartIcon from "./cart_icon.png";
+import contactImg from "./contact_img.png";
+import crossIcon from "./cross_icon.png";
+import dropdownIcon from "./dropdown_icon.png";
+import exchangeIcon from "./exchange_icon.png";
+import heroImg from "./hero_img.png";
 import logo from "./logo.png";
-import menu_icon from "./menu_icon.png";
+import menuIcon from "./menu_icon.png";
 import p_img1 from "./p_img1.png";
 import p_img2_1 from "./p_img2_1.png";
 import p_img2_2 from "./p_img2_2.png";
@@ -63,34 +63,34 @@ import p_img49 from "./p_img49.png";
 import p_img50 from "./p_img50.png";
 import p_img51 from "./p_img51.png";
 import p_img52 from "./p_img52.png";
-import profile_icon from "./profile_icon.png";
-import quality_icon from "./quality_icon.png";
-import razorpay_logo from "./razorpay_logo.png";
-import search_icon from "./search_icon.png";
-import star_dull_icon from "./star_dull_icon.png";
-import star_icon from "./star_icon.png";
-import stripe_logo from "./stripe_logo.png";
-import support_img from "./support_img.png";
+import profileIcon from "./profile_icon.png";
+import qualityIcon from "./quality_icon.png";
+import razorpayLogo from "./razorpay_logo.png";
+import searchIcon from "./search_icon.png";
+import starDullIcon from "./star_dull_icon.png";
+import starIcon from "./star_icon.png";
+import stripeLogo from "./stripe_logo.png";
+import supportImg from "./support_img.png";
 
 export const assets = {
-  about_img,
-  bin_icon,
-  cart_icon,
-  contact_img,
-  cross_icon,
-  dropdown_icon,
-  exchange_icon,
-  hero_img,
+  aboutImg,
+  binIcon,
+  cartIcon,
+  contactImg,
+  crossIcon,
+  dropdownIcon,
+  exchangeIcon,
+  heroImg,
   logo,
-  menu_icon,
-  profile_icon,
-  quality_icon,
-  razorpay_logo,
-  search_icon,
-  star_dull_icon,
-  star_icon,
-  stripe_logo,
-  support_img,
+  menuIcon,
+  profileIcon,
+  qualityIcon,
+  razorpayLogo,
+  searchIcon,
+  starDullIcon,
+  starIcon,
+  stripeLogo,
+  supportImg,
 };
 
 export const products = [

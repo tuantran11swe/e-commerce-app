@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { assets } from "../assets/frontend_assets/assets";
 import ProductItem from "../components/ProductItem";
 import Title from "../components/Title";
@@ -11,9 +11,6 @@ const Collection = () => {
 
   // State quản lý hiển thị/ẩn bộ lọc trên mobile
   const [showFilters, setShowFilters] = useState(false);
-
-  // State lưu danh sách sản phẩm sau khi áp dụng bộ lọc
-  const [filterProducts, setFilterProducts] = useState([]);
 
   // State lưu danh sách các danh mục được chọn để lọc
   const [category, setCategory] = useState([]);
@@ -46,9 +43,9 @@ const Collection = () => {
     }
   };
 
-  // Effect: Áp dụng bộ lọc và sắp xếp sản phẩm khi các điều kiện thay đổi
-  // Gộp logic lọc và sắp xếp vào một effect để tránh vòng lặp vô hạn
-  useEffect(() => {
+  // Áp dụng bộ lọc và sắp xếp sản phẩm khi các điều kiện thay đổi
+  // Sử dụng useMemo để tính toán lại chỉ khi các dependencies thay đổi
+  const filterProducts = useMemo(() => {
     // Tạo bản sao của mảng products để không thay đổi dữ liệu gốc
     let productsCopy = products.slice();
 
@@ -88,8 +85,7 @@ const Collection = () => {
         break;
     }
 
-    // Cập nhật danh sách sản phẩm đã lọc và sắp xếp
-    setFilterProducts(productsCopy);
+    return productsCopy;
   }, [products, showSearch, search, category, subCategory, sortType]);
   return (
     <div className="flex sm:flex-row flex-col gap-1 sm:gap-10 pt-10 border-t">
@@ -106,7 +102,7 @@ const Collection = () => {
           <img
             alt=""
             className={`h-3 sm:hidden ${showFilters ? "rotate-90" : ""}`}
-            src={assets.dropdown_icon}
+            src={assets.dropdownIcon}
           />
         </button>
 

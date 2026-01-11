@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo } from "react";
 import { ShopContext } from "../context/ShopContext";
 import ProductItem from "./ProductItem";
 import Title from "./Title";
@@ -8,15 +8,12 @@ const BestSeller = () => {
   // Lấy danh sách sản phẩm từ context
   const { products } = useContext(ShopContext);
 
-  // State lưu danh sách sản phẩm bán chạy
-  const [bestSeller, setBestSeller] = useState([]);
-
-  // Effect để lọc và lấy 5 sản phẩm bán chạy nhất khi danh sách products thay đổi
-  useEffect(() => {
+  // Lọc và lấy 5 sản phẩm bán chạy nhất khi danh sách products thay đổi
+  const bestSeller = useMemo(() => {
     // Lọc các sản phẩm có thuộc tính bestseller = true
     const bestProduct = products.filter((item) => item.bestseller);
     // Chỉ lấy 5 sản phẩm đầu tiên
-    setBestSeller(bestProduct.slice(0, 5));
+    return bestProduct.slice(0, 5);
   }, [products]);
 
   return (

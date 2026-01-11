@@ -96,7 +96,7 @@ const PlaceOrder = () => {
                   method === "stripe" ? "bg-gray-400" : ""
                 }`}
               ></p>
-              <img alt="Stripe" className="mx-4 h-5" src={assets.stripe_logo} />
+              <img alt="Stripe" className="mx-4 h-5" src={assets.stripeLogo} />
             </button>
             {/* Tùy chọn thanh toán qua Razorpay */}
             <button
@@ -113,7 +113,7 @@ const PlaceOrder = () => {
               <img
                 alt="Razorpay"
                 className="mx-4 h-5"
-                src={assets.razorpay_logo}
+                src={assets.razorpayLogo}
               />
             </button>
             {/* Tùy chọn thanh toán khi nhận hàng (COD) */}

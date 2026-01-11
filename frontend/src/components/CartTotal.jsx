@@ -4,7 +4,7 @@ import Title from "./Title";
 
 // Component hiển thị tổng tiền giỏ hàng
 const CartTotal = () => {
-  const { delivery_fee, formatPrice, getCartAmount } = useContext(ShopContext);
+  const { deliveryFee, formatPrice, getCartAmount } = useContext(ShopContext);
 
   return (
     <div className="w-full">
@@ -19,14 +19,14 @@ const CartTotal = () => {
         <hr />
         <div className="flex justify-between">
           <p>Phí vận chuyển</p>
-          <p>{formatPrice(delivery_fee)}</p>
+          <p>{formatPrice(deliveryFee)}</p>
         </div>
         <hr />
         <div className="flex justify-between">
           <p>Tổng cộng</p>
           <p>
             {formatPrice(
-              getCartAmount() === 0 ? 0 : getCartAmount() + delivery_fee,
+              getCartAmount() === 0 ? 0 : getCartAmount() + deliveryFee,
             )}
           </p>
         </div>
