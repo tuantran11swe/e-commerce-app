@@ -52,7 +52,13 @@ const Navbar = () => {
 
         {/* Dropdown menu profile - hiển thị khi hover */}
         <div className="group relative">
-          <img alt="" className="w-5 cursor-pointer" src={assets.profileIcon} />
+          <Link to="/login">
+            <img
+              alt=""
+              className="w-5 cursor-pointer"
+              src={assets.profileIcon}
+            />
+          </Link>
           {/* Menu dropdown xuất hiện khi hover vào icon profile */}
           <div className="hidden group-hover:block right-0 absolute pt-4 dropdown-menu">
             <div className="flex flex-col gap-2 bg-slate-100 px-5 py-3 rounded w-36 text-gray-500">
