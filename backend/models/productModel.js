@@ -18,22 +18,12 @@ const productSchema = new mongoose.Schema(
 
     /**
      * Danh mục chính của sản phẩm
-     * Ví dụ: Quần áo, Giày dép, Phụ kiện, v.v.
+     * Ví dụ: Nữ, Nam, Trẻ em
      */
     category: {
-      lowercase: true, // Chuyển về chữ thường để dễ tìm kiếm và so sánh
       required: [true, "Danh mục sản phẩm là bắt buộc"],
       trim: true,
       type: String,
-    },
-
-    /**
-     * Ngày tạo sản phẩm
-     * Tự động được tạo khi document được lưu lần đầu
-     */
-    createdAt: {
-      default: Date.now,
-      type: Date,
     },
 
     /**
@@ -89,10 +79,9 @@ const productSchema = new mongoose.Schema(
 
     /**
      * Danh mục con của sản phẩm
-     * Ví dụ: Áo thun, Quần jean, Giày thể thao, v.v.
+     * Ví dụ: Áo, Quần, Đồ mùa đông
      */
     subcategory: {
-      lowercase: true,
       trim: true,
       type: String,
     },
@@ -105,6 +94,20 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+/**
+ * Virtual field để tương thích với frontend
+ * Trả về timestamp dạng số từ createdAt
+ */
+productSchema.virtual("date").get(function () {
+  return this.createdAt ? this.createdAt.getTime() : Date.now();
+});
+
+/**
+ * Đảm bảo virtual fields được include khi convert sang JSON
+ */
+productSchema.set("toJSON", { virtuals: true });
+productSchema.set("toObject", { virtuals: true });
 
 /**
  * Tạo index cho các trường thường được sử dụng để tìm kiếm

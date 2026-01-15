@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { connectMongoDB } from "./config/mongodb.js";
 import "./config/cloudinary.js";
+import productRoute from "./routes/productRoute.js";
 import userRoute from "./routes/userRoute.js";
 
 // Load các biến môi trường từ file .env
@@ -30,6 +31,9 @@ app.get("/", (_req, res) => {
 
 // Mount user routes tại đường dẫn /api/user
 app.use("/api/user", userRoute);
+
+// Mount product routes tại đường dẫn /api/product
+app.use("/api/product", productRoute);
 
 // Khởi động server và lắng nghe trên PORT đã cấu hình
 app.listen(PORT, async () => {

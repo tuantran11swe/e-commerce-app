@@ -4,5 +4,6 @@
     "source.action.useSortedKeys.biome": "explicit",
     "source.action.useSortedProperties.biome": "explicit",
     "source.fixAll.biome": "explicit"
-  }
+  },
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
