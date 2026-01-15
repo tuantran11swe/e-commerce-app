@@ -16,7 +16,7 @@ const Collection = () => {
   const [category, setCategory] = useState([]);
 
   // State lưu danh sách các loại sản phẩm được chọn để lọc
-  const [subCategory, setSubCategory] = useState([]);
+  const [subcategory, setSubcategory] = useState([]);
 
   // State quản lý kiểu sắp xếp: "relevant" (mặc định), "low-high" (giá thấp đến cao), "high-low" (giá cao đến thấp)
   const [sortType, setSortType] = useState("relevant");
@@ -32,14 +32,14 @@ const Collection = () => {
     }
   };
 
-  // Hàm xử lý toggle checkbox loại sản phẩm - thêm/xóa loại sản phẩm khỏi mảng subCategory
-  const toggleSubCategory = (e) => {
-    if (subCategory.includes(e.target.value)) {
+  // Hàm xử lý toggle checkbox loại sản phẩm - thêm/xóa loại sản phẩm khỏi mảng subcategory
+  const toggleSubcategory = (e) => {
+    if (subcategory.includes(e.target.value)) {
       // Nếu loại sản phẩm đã được chọn thì xóa khỏi mảng
-      setSubCategory((prev) => prev.filter((item) => item !== e.target.value));
+      setSubcategory((prev) => prev.filter((item) => item !== e.target.value));
     } else {
       // Nếu chưa được chọn thì thêm vào mảng
-      setSubCategory((prev) => [...prev, e.target.value]);
+      setSubcategory((prev) => [...prev, e.target.value]);
     }
   };
 
@@ -64,9 +64,9 @@ const Collection = () => {
     }
 
     // Lọc theo loại sản phẩm nếu có loại nào được chọn
-    if (subCategory.length > 0) {
+    if (subcategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        subCategory.includes(item.subCategory),
+        subcategory.includes(item.subcategory),
       );
     }
 
@@ -86,7 +86,7 @@ const Collection = () => {
     }
 
     return productsCopy;
-  }, [products, showSearch, search, category, subCategory, sortType]);
+  }, [products, showSearch, search, category, subcategory, sortType]);
   return (
     <div className="flex sm:flex-row flex-col gap-1 sm:gap-10 pt-10 border-t">
       {/* Sidebar chứa bộ lọc - hiển thị bên trái trên desktop, trên cùng trên mobile */}
@@ -155,7 +155,7 @@ const Collection = () => {
             <p className="flex gap-2">
               <input
                 className="w-3"
-                onChange={toggleSubCategory}
+                onChange={toggleSubcategory}
                 type="checkbox"
                 value="Áo"
               />{" "}
@@ -164,7 +164,7 @@ const Collection = () => {
             <p className="flex gap-2">
               <input
                 className="w-3"
-                onChange={toggleSubCategory}
+                onChange={toggleSubcategory}
                 type="checkbox"
                 value="Quần"
               />{" "}
@@ -173,7 +173,7 @@ const Collection = () => {
             <p className="flex gap-2">
               <input
                 className="w-3"
-                onChange={toggleSubCategory}
+                onChange={toggleSubcategory}
                 type="checkbox"
                 value="Đồ mùa đông"
               />{" "}
@@ -206,7 +206,7 @@ const Collection = () => {
           {filterProducts.map((item) => (
             <ProductItem
               id={item._id}
-              image={item.image}
+              image={item.images}
               key={item._id}
               name={item.name}
               price={item.price}

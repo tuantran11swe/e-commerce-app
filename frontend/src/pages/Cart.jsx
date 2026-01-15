@@ -71,7 +71,7 @@ const Cart = () => {
                 <img
                   alt={`Hình ảnh ${productData.name}`}
                   className="w-16 sm:w-20"
-                  src={productData.image[0]}
+                  src={productData.images[0]}
                 />
                 {/* Tên sản phẩm, giá và size */}
                 <div>

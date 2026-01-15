@@ -8,11 +8,11 @@ const Orders = () => {
   // Lấy danh sách sản phẩm và hàm format giá từ context
   const { products, formatPrice } = useContext(ShopContext);
 
-  // Hàm chuyển đổi timestamp thành định dạng ngày tháng tiếng Việt
-  // date: timestamp (milliseconds)
+  // Hàm chuyển đổi timestamp hoặc Date object thành định dạng ngày tháng tiếng Việt
+  // date: timestamp (milliseconds) hoặc Date object
   // Trả về: chuỗi ngày tháng định dạng dd/mm/yyyy
   const formatDate = (date) => {
-    const dateObj = new Date(date);
+    const dateObj = date instanceof Date ? date : new Date(date);
     const day = dateObj.getDate().toString().padStart(2, "0");
     const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
     const year = dateObj.getFullYear();
@@ -40,7 +40,7 @@ const Orders = () => {
               <img
                 alt={item.name}
                 className="w-16 sm:w-20"
-                src={item.image[0]}
+                src={item.images[0]}
               />
               <div>
                 {/* Tên sản phẩm */}
@@ -57,7 +57,9 @@ const Orders = () => {
                 {/* Ngày đặt hàng */}
                 <p className="mt-2">
                   Ngày:{" "}
-                  <span className="text-gray-400">{formatDate(item.date)}</span>
+                  <span className="text-gray-400">
+                    {formatDate(item.createdAt || item.date)}
+                  </span>
                 </p>
               </div>
             </div>

@@ -22,7 +22,7 @@ const Product = () => {
     products.forEach((item) => {
       if (item._id === productId) {
         setProductData(item);
-        setImage(item.image?.[0] || "");
+        setImage(item.images?.[0] || "");
       }
     });
   }, [products, productId]);
@@ -39,7 +39,7 @@ const Product = () => {
         {/* Phần hiển thị hình ảnh sản phẩm */}
         <div className="flex sm:flex-row flex-col-reverse flex-1 gap-2 sm:gap-4">
           <div className="flex sm:flex-col justify-between sm:justify-normal w-full sm:w-[18.7%] overflow-x-auto sm:overflow-y-scroll">
-            {productData.image.map((item) => (
+            {productData.images.map((item) => (
               <img
                 alt={`Hình ảnh sản phẩm ${productData.name}`}
                 className="sm:mb-3 w-[24%] sm:w-full cursor-pointer shrink-0"
@@ -144,7 +144,7 @@ const Product = () => {
 
       <RelatedProduct
         category={productData.category}
-        subCategory={productData.subCategory}
+        subcategory={productData.subcategory}
       />
     </div>
   ) : (

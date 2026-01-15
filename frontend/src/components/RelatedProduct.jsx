@@ -3,27 +3,27 @@ import { ShopContext } from "../context/ShopContext";
 import ProductItem from "./ProductItem";
 import Title from "./Title";
 
-// Component hiển thị các sản phẩm liên quan dựa trên category và subCategory
-const RelatedProduct = ({ category, subCategory }) => {
+// Component hiển thị các sản phẩm liên quan dựa trên category và subcategory
+const RelatedProduct = ({ category, subcategory }) => {
   // Lấy danh sách sản phẩm từ context
   const { products } = useContext(ShopContext);
 
-  // Lọc và lấy các sản phẩm liên quan khi products, category hoặc subCategory thay đổi
+  // Lọc và lấy các sản phẩm liên quan khi products, category hoặc subcategory thay đổi
   const related = useMemo(() => {
     if (products.length > 0) {
       // Tạo bản sao của mảng products để không làm thay đổi mảng gốc
       let productsCopy = products.slice();
       // Lọc các sản phẩm có cùng category
       productsCopy = productsCopy.filter((item) => category === item.category);
-      // Lọc các sản phẩm có cùng subCategory
+      // Lọc các sản phẩm có cùng subcategory
       productsCopy = productsCopy.filter(
-        (item) => subCategory === item.subCategory,
+        (item) => subcategory === item.subcategory,
       );
       // Lấy tối đa 5 sản phẩm đầu tiên
       return productsCopy.slice(0, 5);
     }
     return [];
-  }, [products, category, subCategory]);
+  }, [products, category, subcategory]);
 
   return (
     <div className="my-24">
@@ -36,7 +36,7 @@ const RelatedProduct = ({ category, subCategory }) => {
         {related.map((item) => (
           <ProductItem
             id={item._id}
-            image={item.image}
+            image={item.images}
             key={item._id}
             name={item.name}
             price={item.price}
