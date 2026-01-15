@@ -1,6 +1,9 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { connectMongoDB } from "./config/mongodb.js";
+import "./config/cloudinary.js";
+import userRoute from "./routes/userRoute.js";
 
 // Load các biến môi trường từ file .env
 dotenv.config();
@@ -25,7 +28,12 @@ app.get("/", (_req, res) => {
   });
 });
 
+// Mount user routes tại đường dẫn /api/user
+app.use("/api/user", userRoute);
+
 // Khởi động server và lắng nghe trên PORT đã cấu hình
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server đang chạy tại http://localhost:${PORT}`);
+  // Kết nối đến MongoDB khi server khởi động
+  await connectMongoDB();
 });
