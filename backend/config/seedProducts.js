@@ -647,7 +647,7 @@ export const seedProducts = async () => {
 
     if (!isCloudinaryConfigured) {
       console.log(
-        "Bỏ qua seed dữ liệu sản phẩm vì Cloudinary chưa được cấu hình đầy đủ"
+        "Bỏ qua seed dữ liệu sản phẩm vì Cloudinary chưa được cấu hình đầy đủ",
       );
       return;
     }
@@ -657,7 +657,7 @@ export const seedProducts = async () => {
 
     if (productCount > 0) {
       console.log(
-        `✓ Database đã có ${productCount} sản phẩm. Bỏ qua việc seed data.`
+        `✓ Database đã có ${productCount} sản phẩm. Bỏ qua việc seed data.`,
       );
       return;
     }
