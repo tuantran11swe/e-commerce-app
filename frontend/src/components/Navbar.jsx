@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import { assets } from "../assets/frontend_assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
@@ -9,7 +10,15 @@ const Navbar = () => {
   const [visible, setVisible] = useState(false);
 
   // Lấy hàm setShowSearch từ context ShopContext để xử lý hiển thị thanh tìm kiếm khi click vào icon tìm kiếm
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+  const { setShowSearch, getCartCount, token, setToken, navigate } =
+    useContext(ShopContext);
+
+  // Hàm xử lý đăng xuất
+  const logout = () => {
+    setToken("");
+    navigate("/login");
+    toast.success("Đăng xuất thành công");
+  };
 
   return (
     <div className="flex justify-between items-center py-5 font-medium">
@@ -52,21 +61,40 @@ const Navbar = () => {
 
         {/* Dropdown menu profile - hiển thị khi hover */}
         <div className="group relative">
-          <Link to="/login">
-            <img
-              alt=""
-              className="w-5 cursor-pointer"
-              src={assets.profileIcon}
-            />
-          </Link>
+          <button
+            className="bg-transparent p-0 border-none w-5 cursor-pointer"
+            onClick={() => (token ? null : navigate("/login"))}
+            type="button"
+          >
+            <img alt="Profile" className="w-5" src={assets.profileIcon} />
+          </button>
           {/* Menu dropdown xuất hiện khi hover vào icon profile */}
-          <div className="hidden group-hover:block right-0 absolute pt-4 dropdown-menu">
-            <div className="flex flex-col gap-2 bg-slate-100 px-5 py-3 rounded w-36 text-gray-500">
-              <p className="hover:text-black cursor-pointer">Hồ sơ của tôi</p>
-              <p className="hover:text-black cursor-pointer">Đơn hàng</p>
-              <p className="hover:text-black cursor-pointer">Đăng xuất</p>
+          {token && (
+            <div className="hidden group-hover:block right-0 absolute pt-4 dropdown-menu">
+              <div className="flex flex-col gap-2 bg-slate-100 px-5 py-3 rounded w-36 text-gray-500">
+                <button
+                  className="bg-transparent p-0 border-none text-gray-500 hover:text-black text-left cursor-pointer"
+                  type="button"
+                >
+                  Hồ sơ của tôi
+                </button>
+                <button
+                  className="bg-transparent p-0 border-none text-gray-500 hover:text-black text-left cursor-pointer"
+                  onClick={() => navigate("/orders")}
+                  type="button"
+                >
+                  Đơn hàng
+                </button>
+                <button
+                  className="bg-transparent p-0 border-none text-gray-500 hover:text-black text-left cursor-pointer"
+                  onClick={logout}
+                  type="button"
+                >
+                  Đăng xuất
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Icon giỏ hàng với badge hiển thị số lượng sản phẩm */}
@@ -79,19 +107,13 @@ const Navbar = () => {
         </Link>
 
         {/* Icon menu mobile - chỉ hiển thị trên màn hình nhỏ (dưới sm) */}
-        <img
-          alt="Menu"
-          className="sm:hidden w-5 cursor-pointer"
+        <button
+          className="sm:hidden bg-transparent p-0 border-none w-5 cursor-pointer"
           onClick={() => setVisible(true)}
-          // Xử lý sự kiện bàn phím để hỗ trợ accessibility
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setVisible(true);
-            }
-          }}
-          src={assets.menuIcon}
-        />
+          type="button"
+        >
+          <img alt="Menu" className="w-5" src={assets.menuIcon} />
+        </button>
       </div>
 
       {/* Menu mobile slide-in từ bên phải */}

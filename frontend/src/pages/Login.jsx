@@ -1,14 +1,68 @@
-import { useState } from "react";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { API_BASE_URL, API_ENDPOINTS } from "../config/config.js";
+import { ShopContext } from "../context/ShopContext";
 
 // Component đăng nhập/đăng ký
 const Login = () => {
   // State quản lý trạng thái hiện tại: "ĐĂNG NHẬP" hoặc "ĐĂNG KÝ"
   const [currentState, setCurrentState] = useState("ĐĂNG KÝ");
 
+  // State quản lý các trường input
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Lấy token và navigate từ ShopContext
+  const { token, setToken, navigate } = useContext(ShopContext);
+
   // Xử lý submit form
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+
+    try {
+      if (currentState === "ĐĂNG KÝ") {
+        // Gọi API đăng ký
+        const response = await axios.post(
+          `${API_BASE_URL}${API_ENDPOINTS.USER.REGISTER}`,
+          { email, name, password },
+        );
+
+        if (response.data.success) {
+          toast.success("Đăng ký thành công!");
+          setToken(response.data.data.token);
+          navigate("/");
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        // Gọi API đăng nhập
+        const response = await axios.post(
+          `${API_BASE_URL}${API_ENDPOINTS.USER.LOGIN}`,
+          { email, password },
+        );
+
+        if (response.data.success) {
+          toast.success("Đăng nhập thành công!");
+          setToken(response.data.data.token);
+          navigate("/");
+        } else {
+          toast.error(response.data.message);
+        }
+      }
+    } catch (error) {
+      console.error("Auth error:", error);
+      toast.error(error.response?.data?.message || "Đã có lỗi xảy ra");
+    }
   };
+
+  // Nếu đã có token (đã đăng nhập) thì chuyển hướng về trang chủ
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   return (
     <form
@@ -28,26 +82,32 @@ const Login = () => {
       ) : (
         <input
           className="px-3 py-2 border border-gray-800 w-full"
+          onChange={(e) => setName(e.target.value)}
           placeholder="Tên"
           required
           type="text"
+          value={name}
         />
       )}
 
       {/* Input email */}
       <input
         className="px-3 py-2 border border-gray-800 w-full"
+        onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
         required
         type="email"
+        value={email}
       />
 
       {/* Input mật khẩu */}
       <input
         className="px-3 py-2 border border-gray-800 w-full"
+        onChange={(e) => setPassword(e.target.value)}
         placeholder="Mật khẩu"
         required
         type="password"
+        value={password}
       />
 
       {/* Footer với link quên mật khẩu và chuyển đổi giữa đăng nhập/đăng ký */}
@@ -74,7 +134,7 @@ const Login = () => {
 
       {/* Button submit form */}
       <button
-        className="bg-black mt-4 px-8 py-2 font-extralight text-white"
+        className="bg-black mt-4 px-8 py-2 font-extralight text-white cursor-pointer"
         type="submit"
       >
         {currentState === "ĐĂNG NHẬP" ? "ĐĂNG NHẬP" : "ĐĂNG KÝ"}

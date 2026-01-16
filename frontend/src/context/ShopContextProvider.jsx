@@ -35,8 +35,23 @@ const ShopContextProvider = (props) => {
 
   // State quản lý trạng thái hiển thị/ẩn thanh tìm kiếm
   const [showSearch, setShowSearch] = useState(false);
+
+  // State quản lý giỏ hàng
   const [cartItems, setCartItems] = useState([]);
+
+  // State quản lý token xác thực
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+
   const navigate = useNavigate();
+
+  // Effect để lưu token vào localStorage mỗi khi thay đổi
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
 
   // Fetch products từ backend khi component mount
   useEffect(() => {
@@ -190,7 +205,9 @@ const ShopContextProvider = (props) => {
     search, // Từ khóa tìm kiếm hiện tại
     setSearch, // Hàm cập nhật từ khóa tìm kiếm
     setShowSearch, // Hàm hiển thị/ẩn thanh tìm kiếm
+    setToken, // Hàm cập nhật token
     showSearch, // Trạng thái hiển thị thanh tìm kiếm
+    token, // Token xác thực
     updateQuantity, // Cập nhật số lượng sản phẩm trong giỏ hàng
   };
 
