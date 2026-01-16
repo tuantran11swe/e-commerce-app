@@ -51,7 +51,7 @@ export const placeOrder = async (req, res) => {
 
     // Chuẩn hóa dữ liệu sản phẩm, chỉ lấy các trường cần thiết
     const normalizedItems = items.map((item) => ({
-      productId: item.productId,
+      productId: item.productId || item._id, // Hỗ trợ cả productId và _id từ frontend
       quantity: item.quantity,
       size: item.size,
     }));
@@ -81,10 +81,11 @@ export const placeOrder = async (req, res) => {
       message: "Đặt hàng thành công",
       success: true,
     });
-  } catch (_error) {
+  } catch (error) {
     // Xử lý lỗi server nếu có bất kỳ lỗi nào xảy ra
+    console.error("Lỗi đặt hàng:", error);
     return res.status(500).json({
-      message: "Lỗi server khi đặt hàng. Vui lòng thử lại sau",
+      message: error.message || "Lỗi server khi đặt hàng. Vui lòng thử lại sau",
       success: false,
     });
   }
@@ -101,12 +102,38 @@ export const placeOrder = async (req, res) => {
 export const allOrders = async (_req, res) => {
   try {
     // Tìm tất cả đơn hàng và sắp xếp theo thời gian tạo giảm dần (mới nhất trước)
-    const orders = await Order.find().sort({ createdAt: -1 });
+    // Populate productId để lấy thông tin chi tiết sản phẩm và userId để lấy tên khách hàng
+    const orders = await Order.find()
+      .populate("items.productId", "name images price")
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
+
+    // Chuẩn hóa dữ liệu
+    const formattedOrders = orders.map((order) => {
+      const orderObj = order.toObject();
+      orderObj.items = orderObj.items.map((item) => {
+        if (item.productId) {
+          return {
+            ...item,
+            images: item.productId.images,
+            name: item.productId.name,
+            price: item.productId.price,
+            productId: item.productId._id,
+          };
+        }
+        return item;
+      });
+      // Chuẩn hóa địa chỉ: thêm shippingAddress từ address để tương thích với frontend
+      if (orderObj.address && typeof orderObj.address === "object") {
+        orderObj.shippingAddress = orderObj.address;
+      }
+      return orderObj;
+    });
 
     // Trả về danh sách đơn hàng thành công
     return res.status(200).json({
       data: {
-        orders,
+        orders: formattedOrders,
       },
       message: "Lấy danh sách tất cả đơn hàng thành công",
       success: true,
@@ -214,12 +241,38 @@ export const userOrders = async (req, res) => {
     }
 
     // Tìm tất cả đơn hàng của người dùng và sắp xếp theo thời gian tạo giảm dần (mới nhất trước)
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+    // Populate productId để lấy thông tin chi tiết sản phẩm (name, images)
+    const orders = await Order.find({ userId })
+      .populate("items.productId", "name images price")
+      .sort({ createdAt: -1 });
+
+    // Chuẩn hóa dữ liệu để frontend dễ dàng hiển thị
+    // Chuyển đổi productId object thành các trường phẳng (name, images) trong mỗi item
+    const formattedOrders = orders.map((order) => {
+      const orderObj = order.toObject();
+      orderObj.items = orderObj.items.map((item) => {
+        if (item.productId) {
+          return {
+            ...item,
+            images: item.productId.images,
+            name: item.productId.name,
+            price: item.productId.price,
+            productId: item.productId._id, // Trả lại ID thay vì cả object
+          };
+        }
+        return item;
+      });
+      // Chuẩn hóa địa chỉ: thêm shippingAddress từ address để tương thích với frontend
+      if (orderObj.address && typeof orderObj.address === "object") {
+        orderObj.shippingAddress = orderObj.address;
+      }
+      return orderObj;
+    });
 
     // Trả về danh sách đơn hàng thành công
     return res.status(200).json({
       data: {
-        orders,
+        orders: formattedOrders,
       },
       message: "Lấy lịch sử đơn hàng thành công",
       success: true,

@@ -65,6 +65,7 @@ const PlaceOrder = () => {
         address: formData,
         amount: getCartAmount() + deliveryFee,
         items: orderItems,
+        paymentMethod: method.toUpperCase(), // Thêm phương thức thanh toán
       };
 
       switch (method) {

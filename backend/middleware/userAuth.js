@@ -18,8 +18,11 @@ export const userAuth = async (req, res, next) => {
     // Lấy header Authorization từ request
     const authHeader = req.headers.authorization;
 
+    // console.log("Auth Header Received:", authHeader); // Debug log
+
     // Kiểm tra header Authorization có tồn tại và bắt đầu bằng "Bearer " không
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log("No Bearer token found in headers"); // Debug log
       return res.status(401).json({
         message: "Không có token xác thực. Vui lòng đăng nhập lại",
         success: false,
@@ -28,6 +31,14 @@ export const userAuth = async (req, res, next) => {
 
     // Tách token từ chuỗi "Bearer <token>"
     const token = authHeader.split(" ")[1];
+
+    if (!token || token === "null" || token === "undefined") {
+      console.log("Token is null or undefined string"); // Debug log
+      return res.status(401).json({
+        message: "Token không hợp lệ. Vui lòng đăng nhập lại",
+        success: false,
+      });
+    }
 
     // Kiểm tra JWT_SECRET có được cấu hình trong environment variables không
     if (!process.env.JWT_SECRET) {

@@ -174,6 +174,70 @@ export const loginUser = async (req, res) => {
 };
 
 /**
+ * Lấy thông tin profile người dùng hiện tại
+ * @param {Object} req - Request object chứa thông tin user từ middleware userAuth
+ * @param {Object} res - Response object để trả về kết quả
+ * @returns {Promise<void>}
+ */
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // Tìm user trong database bằng ID từ token
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Không tìm thấy người dùng",
+        success: false,
+      });
+    }
+
+    // Trả về thông tin user (không bao gồm password)
+    res.status(200).json({
+      data: {
+        user: {
+          email: user.email,
+          id: user._id,
+          name: user.name,
+        },
+      },
+      message: "Lấy thông tin profile thành công",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy profile user:", error);
+    res.status(500).json({
+      message: "Lỗi server khi lấy thông tin profile",
+      success: false,
+    });
+  }
+};
+
+/**
+ * Đăng xuất người dùng
+ * Với JWT, việc đăng xuất chủ yếu thực hiện ở phía Client (xóa token)
+ * Route này có thể dùng để log lại thời điểm đăng xuất hoặc blacklist token nếu cần
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {Promise<void>}
+ */
+export const logoutUser = async (_req, res) => {
+  try {
+    res.status(200).json({
+      message: "Đăng xuất thành công",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Lỗi khi đăng xuất:", error);
+    res.status(500).json({
+      message: "Lỗi server khi đăng xuất",
+      success: false,
+    });
+  }
+};
+
+/**
  * Đăng nhập Admin
  * So sánh email và password với thông tin Admin được lưu trong biến môi trường
  * @param {Object} req - Request object chứa email và password

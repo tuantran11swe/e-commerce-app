@@ -13,9 +13,9 @@ export const API_ENDPOINTS = {
     UPDATE: "/api/cart/update",
   },
   ORDER: {
-    DETAIL: (id) => `/api/order/${id}`,
+    DETAIL: (id) => `/api/order/${id}/status`,
     PLACE: "/api/order/place",
-    USER_ORDERS: "/api/order/userorders",
+    USER_ORDERS: "/api/order/user",
   },
   PRODUCTS: {
     LIST: "/api/product/list",

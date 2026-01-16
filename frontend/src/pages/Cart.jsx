@@ -8,8 +8,14 @@ import { ShopContext } from "../context/ShopContext";
 // Component trang giỏ hàng - hiển thị danh sách sản phẩm đã thêm vào giỏ và cho phép cập nhật/xóa
 const Cart = () => {
   // Lấy các giá trị và hàm cần thiết từ ShopContext
-  const { formatPrice, products, cartItems, updateQuantity, navigate } =
-    useContext(ShopContext);
+  const {
+    formatPrice,
+    products,
+    cartItems,
+    updateQuantity,
+    navigate,
+    loading,
+  } = useContext(ShopContext);
 
   // Chuyển đổi cartItems từ object sang mảng để dễ dàng render
   // cartItems có cấu trúc: { itemId: { size: quantity } }
@@ -47,6 +53,14 @@ const Cart = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="border-4 border-gray-200 border-t-gray-800 rounded-full w-12 h-12 animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-14 border-t">
       <div className="mb-3 text-2xl">
@@ -59,6 +73,12 @@ const Cart = () => {
           const productData = products.find(
             (product) => product._id === item._id,
           );
+
+          // Nếu không tìm thấy thông tin sản phẩm (có thể do đang load hoặc id không tồn tại)
+          if (!productData) {
+            return null;
+          }
+
           return (
             // Mỗi item trong giỏ hàng hiển thị: hình ảnh + thông tin, input số lượng, nút xóa
             <div
@@ -71,7 +91,11 @@ const Cart = () => {
                 <img
                   alt={`Hình ảnh ${productData.name}`}
                   className="w-16 sm:w-20"
-                  src={productData.images[0]}
+                  src={
+                    productData.images && productData.images.length > 0
+                      ? productData.images[0]
+                      : ""
+                  }
                 />
                 {/* Tên sản phẩm, giá và size */}
                 <div>

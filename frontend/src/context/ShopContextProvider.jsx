@@ -9,8 +9,14 @@ import { ShopContext } from "./ShopContext";
 // Hàm format giá theo định dạng Việt Nam (dấu chấm phân cách hàng nghìn)
 // Ví dụ: 150000 -> "150.000 ₫"
 const formatPrice = (price) => {
+  // Kiểm tra nếu price không hợp lệ (undefined, null, NaN) thì trả về giá trị mặc định
+  if (price === undefined || price === null || Number.isNaN(Number(price))) {
+    return "0 ₫";
+  }
   // Chuyển số thành chuỗi và thêm dấu chấm phân cách hàng nghìn
-  const formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const formattedPrice = Number(price)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   return `${formattedPrice} ₫`;
 };
 
@@ -46,10 +52,10 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState(() => {
     try {
       const savedCart = localStorage.getItem("cart");
-      return savedCart ? JSON.parse(savedCart) : [];
+      return savedCart ? JSON.parse(savedCart) : {};
     } catch (error) {
       console.error("Error loading cart from localStorage:", error);
-      return [];
+      return {};
     }
   });
 
@@ -72,7 +78,9 @@ const ShopContextProvider = (props) => {
 
   // Lấy giỏ hàng từ server
   const getCartFromServer = useCallback(async () => {
-    if (!token) return;
+    // Kiểm tra token từ localStorage để đảm bảo token vẫn còn tồn tại
+    const currentToken = localStorage.getItem("token");
+    if (!currentToken || !token) return;
     try {
       setCartLoading(true);
       const response = await axiosInstance.get(API_ENDPOINTS.CART.GET);
@@ -80,22 +88,30 @@ const ShopContextProvider = (props) => {
         setCartItems(response.data.data.cart);
       }
     } catch (error) {
-      console.error("Error getting cart:", error);
+      // Chỉ log lỗi nếu không phải lỗi 401 (401 đã được xử lý bởi axios interceptor)
+      if (error.response?.status !== 401) {
+        console.error("Error getting cart:", error);
+      }
     } finally {
       setCartLoading(false);
     }
   }, [token]);
 
   // Đồng bộ giỏ hàng từ localStorage lên server khi đăng nhập
-  const syncCartWithBackend = useCallback(async () => {
-    if (!token || Object.keys(cartItems).length === 0) return;
+  const _syncCartWithBackend = useCallback(async () => {
+    // Kiểm tra token từ localStorage để đảm bảo token vẫn còn tồn tại
+    const currentToken = localStorage.getItem("token");
+    if (!currentToken || !token || Object.keys(cartItems).length === 0) return;
     try {
       setCartLoading(true);
       await axiosInstance.post(API_ENDPOINTS.CART.SYNC, { cart: cartItems });
       // Lấy giỏ hàng mới nhất từ server sau khi sync
       getCartFromServer();
     } catch (error) {
-      console.error("Error syncing cart:", error);
+      // Chỉ log lỗi nếu không phải lỗi 401 (401 đã được xử lý bởi axios interceptor)
+      if (error.response?.status !== 401) {
+        console.error("Error syncing cart:", error);
+      }
     } finally {
       setCartLoading(false);
     }
@@ -106,12 +122,20 @@ const ShopContextProvider = (props) => {
     if (token) {
       localStorage.setItem("token", token);
       fetchUserProfile();
-      syncCartWithBackend();
+      // Lấy giỏ hàng từ server khi có token mới để đồng bộ
+      // Không sync cartItems từ localStorage lên server ở đây để tránh ghi đè giỏ hàng trên server
+      getCartFromServer();
     } else {
       localStorage.removeItem("token");
       setUser(null);
     }
-  }, [token, fetchUserProfile, syncCartWithBackend]);
+    // Chỉ chạy khi token thay đổi, không phụ thuộc vào cartItems để tránh vòng lặp vô hạn
+  }, [
+    token,
+    fetchUserProfile, // Lấy giỏ hàng từ server khi có token mới để đồng bộ
+    // Không sync cartItems từ localStorage lên server ở đây để tránh ghi đè giỏ hàng trên server
+    getCartFromServer,
+  ]);
 
   // Effect để lưu giỏ hàng vào localStorage khi thay đổi
   useEffect(() => {
@@ -285,13 +309,21 @@ const ShopContextProvider = (props) => {
 
   // Hàm xóa giỏ hàng (sau khi đặt hàng)
   const clearCart = async () => {
-    setCartItems([]);
+    // Xóa giỏ hàng ở local state trước
+    setCartItems({});
     localStorage.removeItem("cart");
-    if (token) {
+
+    // Kiểm tra token từ localStorage để đảm bảo token vẫn còn tồn tại trước khi gọi API
+    const currentToken = localStorage.getItem("token");
+    if (currentToken && token) {
       try {
-        await axiosInstance.delete(API_ENDPOINTS.CART.CLEAR);
+        // Backend sử dụng POST method cho endpoint clear
+        await axiosInstance.post(API_ENDPOINTS.CART.CLEAR);
       } catch (error) {
-        console.error("Error clearing backend cart:", error);
+        // Chỉ log lỗi nếu không phải lỗi 401 (401 đã được xử lý bởi axios interceptor)
+        if (error.response?.status !== 401) {
+          console.error("Error clearing backend cart:", error);
+        }
       }
     }
   };

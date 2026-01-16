@@ -91,11 +91,17 @@ const Orders = () => {
             key={`${item.orderId}-${index}`}
           >
             <div className="flex items-start gap-6 text-sm">
-              <img
-                alt={item.name}
-                className="w-16 sm:w-20"
-                src={item.images[0]}
-              />
+              {item.images && item.images.length > 0 && item.images[0] ? (
+                <img
+                  alt={item.name}
+                  className="w-16 sm:w-20"
+                  src={item.images[0]}
+                />
+              ) : (
+                <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
+                  No Image
+                </div>
+              )}
               <div>
                 <p className="font-medium sm:text-base">{item.name}</p>
                 <div className="flex items-center gap-3 mt-2 text-gray-700 text-base">
