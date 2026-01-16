@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SearchBar from "./components/SearchBar";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
@@ -9,6 +10,7 @@ import Collection from "./pages/Collection";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import Orders from "./pages/Orders";
 import PlaceOrder from "./pages/PlaceOrder";
 import Product from "./pages/Product";
@@ -38,8 +40,23 @@ function App() {
         <Route element={<Product />} path="/product/:productId" />
         <Route element={<Cart />} path="/cart" />
         <Route element={<Login />} path="/login" />
-        <Route element={<PlaceOrder />} path="/place-order" />
-        <Route element={<Orders />} path="/orders" />
+        <Route
+          element={
+            <ProtectedRoute>
+              <PlaceOrder />
+            </ProtectedRoute>
+          }
+          path="/place-order"
+        />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+          path="/orders"
+        />
+        <Route element={<OrderConfirmation />} path="/order-confirmation" />
       </Routes>
       <Footer />
     </div>

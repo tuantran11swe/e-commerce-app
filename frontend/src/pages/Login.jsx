@@ -14,8 +14,9 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Lấy token và navigate từ ShopContext
+  // Lấy các giá trị cần thiết từ ShopContext
   const { token, setToken, navigate } = useContext(ShopContext);
+  const [_loading, _setLoading] = useState(false); // Local loading for form submission
 
   // Xử lý submit form
   const onSubmitHandler = async (event) => {
@@ -32,7 +33,6 @@ const Login = () => {
         if (response.data.success) {
           toast.success("Đăng ký thành công!");
           setToken(response.data.data.token);
-          navigate("/");
         } else {
           toast.error(response.data.message);
         }
@@ -46,7 +46,6 @@ const Login = () => {
         if (response.data.success) {
           toast.success("Đăng nhập thành công!");
           setToken(response.data.data.token);
-          navigate("/");
         } else {
           toast.error(response.data.message);
         }

@@ -5,12 +5,26 @@ export const API_BASE_URL =
 
 // API endpoints
 export const API_ENDPOINTS = {
+  CART: {
+    ADD: "/api/cart/add",
+    CLEAR: "/api/cart/clear",
+    GET: "/api/cart/get",
+    SYNC: "/api/cart/sync",
+    UPDATE: "/api/cart/update",
+  },
+  ORDER: {
+    DETAIL: (id) => `/api/order/${id}`,
+    PLACE: "/api/order/place",
+    USER_ORDERS: "/api/order/userorders",
+  },
   PRODUCTS: {
     LIST: "/api/product/list",
     SINGLE: (id) => `/api/product/${id}`,
   },
   USER: {
     LOGIN: "/api/user/login",
+    LOGOUT: "/api/user/logout",
+    PROFILE: "/api/user/profile",
     REGISTER: "/api/user/register",
   },
 };

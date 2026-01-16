@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from "../api/axiosConfig";
 import { fetchProducts } from "../api/productApi";
+import { API_ENDPOINTS } from "../config/config";
 import { ShopContext } from "./ShopContext";
 
 // Hàm format giá theo định dạng Việt Nam (dấu chấm phân cách hàng nghìn)
@@ -24,11 +26,8 @@ const ShopContextProvider = (props) => {
   // State quản lý danh sách sản phẩm từ backend
   const [products, setProducts] = useState([]);
 
-  // State quản lý trạng thái loading khi fetch dữ liệu
-  const [loading, setLoading] = useState(true);
-
-  // State quản lý lỗi nếu có
-  const [error, setError] = useState(null);
+  // State quản lý người dùng hiện tại
+  const [user, setUser] = useState(null);
 
   // State quản lý từ khóa tìm kiếm của người dùng
   const [search, setSearch] = useState("");
@@ -36,22 +35,88 @@ const ShopContextProvider = (props) => {
   // State quản lý trạng thái hiển thị/ẩn thanh tìm kiếm
   const [showSearch, setShowSearch] = useState(false);
 
-  // State quản lý giỏ hàng
-  const [cartItems, setCartItems] = useState([]);
+  // State quản lý trạng thái loading khi fetch dữ liệu/thực hiện tác vụ
+  const [loading, setLoading] = useState(true);
+  const [cartLoading, setCartLoading] = useState(false);
+
+  // State quản lý lỗi nếu có
+  const [error, setError] = useState(null);
+
+  // State quản lý giỏ hàng - Khởi tạo từ localStorage nếu có
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem("cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+      return [];
+    }
+  });
 
   // State quản lý token xác thực
   const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   const navigate = useNavigate();
 
-  // Effect để lưu token vào localStorage mỗi khi thay đổi
+  // Hàm lấy thông tin user từ backend
+  const fetchUserProfile = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.USER.PROFILE);
+      if (response.data.success) {
+        setUser(response.data.data.user);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  }, []);
+
+  // Lấy giỏ hàng từ server
+  const getCartFromServer = useCallback(async () => {
+    if (!token) return;
+    try {
+      setCartLoading(true);
+      const response = await axiosInstance.get(API_ENDPOINTS.CART.GET);
+      if (response.data.success) {
+        setCartItems(response.data.data.cart);
+      }
+    } catch (error) {
+      console.error("Error getting cart:", error);
+    } finally {
+      setCartLoading(false);
+    }
+  }, [token]);
+
+  // Đồng bộ giỏ hàng từ localStorage lên server khi đăng nhập
+  const syncCartWithBackend = useCallback(async () => {
+    if (!token || Object.keys(cartItems).length === 0) return;
+    try {
+      setCartLoading(true);
+      await axiosInstance.post(API_ENDPOINTS.CART.SYNC, { cart: cartItems });
+      // Lấy giỏ hàng mới nhất từ server sau khi sync
+      getCartFromServer();
+    } catch (error) {
+      console.error("Error syncing cart:", error);
+    } finally {
+      setCartLoading(false);
+    }
+  }, [token, cartItems, getCartFromServer]);
+
+  // Effect để lưu token và fetch profile khi đổi token
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      fetchUserProfile();
+      syncCartWithBackend();
     } else {
       localStorage.removeItem("token");
+      setUser(null);
     }
-  }, [token]);
+  }, [token, fetchUserProfile, syncCartWithBackend]);
+
+  // Effect để lưu giỏ hàng vào localStorage khi thay đổi
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Fetch products từ backend khi component mount
   useEffect(() => {
@@ -81,53 +146,55 @@ const ShopContextProvider = (props) => {
   // Hàm thêm sản phẩm vào giỏ hàng
   // itemId: ID của sản phẩm cần thêm
   // size: Kích thước của sản phẩm (bắt buộc)
-  const addToCart = (itemId, size) => {
+  const addToCart = async (itemId, size) => {
     // Kiểm tra nếu chưa chọn kích thước thì hiển thị lỗi và dừng lại
     if (!size) {
       toast.error("Vui lòng chọn kích thước");
       return;
     }
-    // Tìm thông tin sản phẩm để hiển thị trong thông báo
+
+    // Nếu đã đăng nhập, gọi API để lưu vào database
+    if (token) {
+      try {
+        setCartLoading(true);
+        const response = await axiosInstance.post(API_ENDPOINTS.CART.ADD, {
+          productId: itemId,
+          quantity: 1,
+          size,
+        });
+
+        if (response.data.success) {
+          // Sync state locally with response from server
+          setCartItems(response.data.data.cart);
+          toast.success("Đã thêm vào giỏ hàng!");
+        }
+      } catch (error) {
+        console.error("Add to cart API error:", error);
+        toast.error("Không thể thêm vào giỏ hàng");
+      } finally {
+        setCartLoading(false);
+      }
+      return;
+    }
+
+    // Logic cho khách vãng lai (lưu local)
     const product = products.find((p) => p._id === itemId);
     const productName = product ? product.name : "Sản phẩm";
-
-    // Tạo bản sao của giỏ hàng hiện tại để tránh mutation trực tiếp
     const cartData = structuredClone(cartItems);
-    let isNewItem = false; // Flag để xác định sản phẩm mới hay đã tồn tại
-    let newQuantity = 1; // Số lượng mới sau khi thêm
 
-    // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
     if (cartData[itemId]) {
-      // Sản phẩm đã có, kiểm tra size đã có chưa
       if (cartData[itemId][size]) {
-        // Sản phẩm đã có trong giỏ với size này, tăng số lượng lên 1
         cartData[itemId][size] += 1;
-        newQuantity = cartData[itemId][size];
       } else {
-        // Sản phẩm có nhưng chưa có size này, thêm size mới với số lượng 1
         cartData[itemId][size] = 1;
-        isNewItem = true;
       }
     } else {
-      // Sản phẩm mới hoàn toàn, tạo object mới cho sản phẩm này
       cartData[itemId] = {};
       cartData[itemId][size] = 1;
-      isNewItem = true;
     }
 
-    // Cập nhật state giỏ hàng với dữ liệu mới
     setCartItems(cartData);
-
-    // Hiển thị thông báo thành công tùy theo sản phẩm mới hay đã tồn tại
-    if (isNewItem) {
-      toast.success(
-        `${productName} (Size: ${size}) đã được thêm vào giỏ hàng!`,
-      );
-    } else {
-      toast.success(
-        `${productName} (Size: ${size}) - Số lượng: ${newQuantity}`,
-      );
-    }
+    toast.success(`${productName} (Size: ${size}) đã được thêm vào giỏ hàng!`);
   };
   // Tính tổng số lượng sản phẩm trong giỏ hàng
   // Duyệt qua tất cả sản phẩm và các size để tính tổng số lượng
@@ -155,12 +222,32 @@ const ShopContextProvider = (props) => {
   // itemId: ID của sản phẩm cần cập nhật
   // size: Kích thước của sản phẩm
   // quantity: Số lượng mới (nếu = 0 thì sẽ xóa sản phẩm)
-  const updateQuantity = (itemId, size, quantity) => {
-    // Tạo bản sao của giỏ hàng để tránh mutation trực tiếp
+  const updateQuantity = async (itemId, size, quantity) => {
+    // Nếu đã đăng nhập, cập nhật lên server
+    if (token) {
+      try {
+        setCartLoading(true);
+        const response = await axiosInstance.put(API_ENDPOINTS.CART.UPDATE, {
+          productId: itemId,
+          quantity,
+          size,
+        });
+
+        if (response.data.success) {
+          setCartItems(response.data.data.cart);
+        }
+      } catch (error) {
+        console.error("Update quantity API error:", error);
+        toast.error("Không thể cập nhật số lượng");
+      } finally {
+        setCartLoading(false);
+      }
+      return;
+    }
+
+    // Cho khách vãng lai
     const cartData = structuredClone(cartItems);
-    // Cập nhật số lượng cho sản phẩm và size cụ thể
     cartData[itemId][size] = quantity;
-    // Cập nhật state với dữ liệu mới
     setCartItems(cartData);
   };
 
@@ -168,47 +255,71 @@ const ShopContextProvider = (props) => {
   // Nhân giá sản phẩm với số lượng của từng size để tính tổng
   const getCartAmount = () => {
     let totalAmount = 0;
-    // Duyệt qua từng sản phẩm trong giỏ hàng
     for (const items in cartItems) {
-      // Tìm thông tin sản phẩm (giá, tên, ...) từ danh sách products
       const itemInfo = products.find((product) => product._id === items);
-      // Duyệt qua từng size của sản phẩm
+      if (!itemInfo) continue; // Bỏ qua nếu không tìm thấy info sản phẩm
+
       for (const item in cartItems[items]) {
         try {
-          // Chỉ tính các sản phẩm có số lượng > 0
           if (cartItems[items][item] > 0) {
-            // Cộng dồn: giá sản phẩm × số lượng
             totalAmount += itemInfo.price * cartItems[items][item];
           }
         } catch (error) {
-          // Xử lý lỗi nếu có vấn đề khi đọc dữ liệu hoặc tính toán
           console.log(error);
         }
       }
     }
     return totalAmount;
   };
+
+  // Hàm đăng xuất
+  const logout = () => {
+    setToken("");
+    setUser(null);
+    setCartItems([]);
+    localStorage.removeItem("token");
+    localStorage.removeItem("cart");
+    toast.success("Đã đăng xuất");
+    navigate("/login");
+  };
+
+  // Hàm xóa giỏ hàng (sau khi đặt hàng)
+  const clearCart = async () => {
+    setCartItems([]);
+    localStorage.removeItem("cart");
+    if (token) {
+      try {
+        await axiosInstance.delete(API_ENDPOINTS.CART.CLEAR);
+      } catch (error) {
+        console.error("Error clearing backend cart:", error);
+      }
+    }
+  };
   // Object chứa tất cả giá trị và hàm cần chia sẻ qua context
   // Các component con có thể sử dụng các giá trị này thông qua useContext hook
   const value = {
-    addToCart, //thêm vào giỏ hàng
-    cartItems, //giỏ hàng
-    currency, // Đơn vị tiền tệ
-    deliveryFee, // Phí vận chuyển
-    error, // Lỗi khi fetch dữ liệu (nếu có)
-    formatPrice, // Hàm format giá theo định dạng Việt Nam
-    getCartAmount, //tổng tiền các sản phẩm trong giỏ hàng
-    getCartCount, //tính tổng số lượng sản phẩm trong giỏ hàng
-    loading, // Trạng thái loading khi fetch dữ liệu
-    navigate, // Hàm điều hướng router
-    products, // Danh sách tất cả sản phẩm
-    search, // Từ khóa tìm kiếm hiện tại
-    setSearch, // Hàm cập nhật từ khóa tìm kiếm
-    setShowSearch, // Hàm hiển thị/ẩn thanh tìm kiếm
-    setToken, // Hàm cập nhật token
-    showSearch, // Trạng thái hiển thị thanh tìm kiếm
-    token, // Token xác thực
-    updateQuantity, // Cập nhật số lượng sản phẩm trong giỏ hàng
+    addToCart,
+    cartItems,
+    cartLoading,
+    clearCart,
+    currency,
+    deliveryFee,
+    error,
+    formatPrice,
+    getCartAmount,
+    getCartCount,
+    loading,
+    logout,
+    navigate,
+    products,
+    search,
+    setSearch,
+    setShowSearch,
+    setToken,
+    showSearch,
+    token,
+    updateQuantity,
+    user,
   };
 
   // Trả về Provider component với value chứa tất cả dữ liệu cần chia sẻ

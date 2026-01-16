@@ -16,7 +16,7 @@ vi.mock("react-toastify", () => ({
 }));
 
 // Helper để render Cart với context có dữ liệu giỏ hàng
-function renderCartWithCartItems(_cartItems = {}) {
+function renderCartWithCartItems() {
   const Wrapper = ({ children }) => (
     <BrowserRouter>
       <ShopContextProvider>{children}</ShopContextProvider>

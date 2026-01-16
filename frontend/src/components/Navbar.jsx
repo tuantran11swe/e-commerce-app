@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { toast } from "react-toastify";
 import { assets } from "../assets/frontend_assets/assets";
 import { ShopContext } from "../context/ShopContext";
 
@@ -9,16 +8,9 @@ const Navbar = () => {
   // State quản lý trạng thái hiển thị menu mobile (ẩn/hiện)
   const [visible, setVisible] = useState(false);
 
-  // Lấy hàm setShowSearch từ context ShopContext để xử lý hiển thị thanh tìm kiếm khi click vào icon tìm kiếm
-  const { setShowSearch, getCartCount, token, setToken, navigate } =
+  // Lấy dữ liệu và hàm từ context ShopContext
+  const { setShowSearch, getCartCount, token, logout, navigate, user } =
     useContext(ShopContext);
-
-  // Hàm xử lý đăng xuất
-  const logout = () => {
-    setToken("");
-    navigate("/login");
-    toast.success("Đăng xuất thành công");
-  };
 
   return (
     <div className="flex justify-between items-center py-5 font-medium">
@@ -76,7 +68,7 @@ const Navbar = () => {
                   className="bg-transparent p-0 border-none text-gray-500 hover:text-black text-left cursor-pointer"
                   type="button"
                 >
-                  Hồ sơ của tôi
+                  {user ? `Chào, ${user.name.split(" ")[0]}` : "Hồ sơ của tôi"}
                 </button>
                 <button
                   className="bg-transparent p-0 border-none text-gray-500 hover:text-black text-left cursor-pointer"

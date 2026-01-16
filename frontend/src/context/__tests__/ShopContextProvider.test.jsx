@@ -24,7 +24,6 @@ function renderShopContextHook() {
 
   return renderHook(
     () => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       return useContext(ShopContext);
     },
     { wrapper },

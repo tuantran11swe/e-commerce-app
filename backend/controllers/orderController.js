@@ -155,7 +155,7 @@ export const updateStatus = async (req, res) => {
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
       { status }, // Chỉ cập nhật trường status
-      { new: true } // Trả về document sau khi cập nhật thay vì document cũ
+      { new: true }, // Trả về document sau khi cập nhật thay vì document cũ
     );
 
     // Kiểm tra xem đơn hàng có tồn tại không

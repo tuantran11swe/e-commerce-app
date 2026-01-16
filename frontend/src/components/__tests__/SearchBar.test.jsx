@@ -13,8 +13,8 @@ vi.mock("react-toastify", () => ({
   },
 }));
 
-// Helper để render SearchBar với route và showSearch state
-function renderSearchBar(route = "/collection", _showSearch = true) {
+// Helper để render SearchBar với route
+function renderSearchBar(route = "/collection") {
   const Wrapper = ({ children }) => (
     <MemoryRouter initialEntries={[route]}>
       <ShopContextProvider>
@@ -29,14 +29,14 @@ function renderSearchBar(route = "/collection", _showSearch = true) {
 
 describe("SearchBar Component", () => {
   it("nên không hiển thị khi không ở trang collection", () => {
-    renderSearchBar("/", true);
+    renderSearchBar("/");
 
     const searchInput = screen.queryByPlaceholderText("Tìm kiếm...");
     expect(searchInput).not.toBeInTheDocument();
   });
 
   it("nên không hiển thị khi showSearch là false", () => {
-    renderSearchBar("/collection", false);
+    renderSearchBar("/collection");
 
     const searchInput = screen.queryByPlaceholderText("Tìm kiếm...");
     expect(searchInput).not.toBeInTheDocument();
@@ -45,14 +45,14 @@ describe("SearchBar Component", () => {
   it("nên hiển thị khi ở trang collection và showSearch là true", () => {
     // Để test này hoạt động, chúng ta cần set showSearch = true trong context
     // Tạm thời test này sẽ kiểm tra component có thể render
-    renderSearchBar("/collection", true);
+    renderSearchBar("/collection");
 
     // Component sẽ render nhưng có thể không hiển thị nếu showSearch = false trong context
     // Test này cần được cải thiện với mock context
   });
 
   it("nên cho phép nhập từ khóa tìm kiếm", async () => {
-    const _user = userEvent.setup();
+    userEvent.setup();
     // Test này cần mock context với showSearch = true
     // Tạm thời chỉ kiểm tra component có thể render
   });
@@ -62,8 +62,8 @@ describe("SearchBar Component", () => {
   });
 
   it("nên cho phép đóng thanh tìm kiếm", async () => {
-    const _user = userEvent.setup();
-    // Test này cần mock context với showSearch = true
+    userEvent.setup();
+    // Test này cần mock context with showSearch = true
     // và kiểm tra setShowSearch(false) được gọi khi click nút đóng
   });
 });
