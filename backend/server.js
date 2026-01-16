@@ -4,6 +4,7 @@ import express from "express";
 import { connectMongoDB } from "./config/mongodb.js";
 import "./config/cloudinary.js";
 import { seedProducts } from "./config/seedProducts.js";
+import orderRoute from "./routes/orderRoute.js";
 import productRoute from "./routes/productRoute.js";
 import userRoute from "./routes/userRoute.js";
 
@@ -35,6 +36,9 @@ app.use("/api/user", userRoute);
 
 // Mount product routes tại đường dẫn /api/product
 app.use("/api/product", productRoute);
+
+// Mount order routes tại đường dẫn /api/order
+app.use("/api/order", orderRoute);
 
 // Khởi động server và lắng nghe trên PORT đã cấu hình
 app.listen(PORT, async () => {
