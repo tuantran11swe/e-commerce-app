@@ -638,18 +638,26 @@ const sampleProducts = [
   },
 ];
 
-/**
- * Hàm seed dữ liệu sản phẩm vào database
- * Chỉ chạy khi database chưa có sản phẩm nào
- */
 export const seedProducts = async () => {
   try {
+    const isCloudinaryConfigured =
+      process.env.CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET;
+
+    if (!isCloudinaryConfigured) {
+      console.log(
+        "Bỏ qua seed dữ liệu sản phẩm vì Cloudinary chưa được cấu hình đầy đủ"
+      );
+      return;
+    }
+
     // Kiểm tra số lượng sản phẩm hiện có
     const productCount = await Product.countDocuments();
 
     if (productCount > 0) {
       console.log(
-        `✓ Database đã có ${productCount} sản phẩm. Bỏ qua việc seed data.`,
+        `✓ Database đã có ${productCount} sản phẩm. Bỏ qua việc seed data.`
       );
       return;
     }
