@@ -23,8 +23,8 @@ function App() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Container hiển thị thông báo toast */}
-      <ToastContainer />
+      {/* Container hiển thị thông báo toast với thời gian tự đóng là 500ms */}
+      <ToastContainer autoClose={500} />
       {/* Kiểm tra token: nếu chưa có token thì hiển thị trang đăng nhập, ngược lại hiển thị dashboard */}
       {token === "" ? (
         <Login setToken={setToken} />

@@ -33,8 +33,11 @@ const Login = ({ setToken }) => {
       });
       // Nếu đăng nhập thành công
       if (response.data.success) {
+        // Hiển thị thông báo đăng nhập thành công
+        toast.success("Đăng nhập thành công");
         // Lưu token vào state và localStorage
-        setToken(response.data.token);
+        // Token được trả về trong response.data.data.token (nested trong object data)
+        setToken(response.data.data.token);
         // Chuyển hướng đến trang thêm sản phẩm
         navigate("/add");
       } else {
