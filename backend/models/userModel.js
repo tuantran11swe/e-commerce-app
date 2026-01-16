@@ -86,13 +86,6 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 /**
- * Tạo index cho email để tăng hiệu suất tìm kiếm
- * Email đã được đánh dấu unique nên index sẽ tự động được tạo
- * Nhưng có thể thêm index để tối ưu hóa truy vấn
- */
-userSchema.index({ email: 1 });
-
-/**
  * Tạo model User từ schema
  * Model này sẽ được sử dụng để tương tác với collection "users" trong MongoDB
  */
