@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { connectMongoDB } from "./config/mongodb.js";
 import "./config/cloudinary.js";
+import { seedProducts } from "./config/seedProducts.js";
 import productRoute from "./routes/productRoute.js";
 import userRoute from "./routes/userRoute.js";
 
@@ -40,4 +41,6 @@ app.listen(PORT, async () => {
   console.log(`Server đang chạy tại http://localhost:${PORT}`);
   // Kết nối đến MongoDB khi server khởi động
   await connectMongoDB();
+  // Kiểm tra và seed dữ liệu sản phẩm nếu cần
+  await seedProducts();
 });

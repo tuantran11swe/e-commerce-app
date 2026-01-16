@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { products } from "../assets/frontend_assets/assets";
+import { fetchProducts } from "../api/productApi";
 import { ShopContext } from "./ShopContext";
 
 // Hàm format giá theo định dạng Việt Nam (dấu chấm phân cách hàng nghìn)
@@ -21,6 +21,15 @@ const ShopContextProvider = (props) => {
   // Phí vận chuyển mặc định (đơn vị: nghìn đồng)
   const deliveryFee = 10000;
 
+  // State quản lý danh sách sản phẩm từ backend
+  const [products, setProducts] = useState([]);
+
+  // State quản lý trạng thái loading khi fetch dữ liệu
+  const [loading, setLoading] = useState(true);
+
+  // State quản lý lỗi nếu có
+  const [error, setError] = useState(null);
+
   // State quản lý từ khóa tìm kiếm của người dùng
   const [search, setSearch] = useState("");
 
@@ -28,6 +37,32 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
+
+  // Fetch products từ backend khi component mount
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch tất cả sản phẩm (có thể thêm params nếu cần)
+        const { products: fetchedProducts } = await fetchProducts({
+          limit: 100, // Lấy nhiều sản phẩm hơn, có thể điều chỉnh
+        });
+
+        setProducts(fetchedProducts);
+      } catch (err) {
+        console.error("Failed to load products:", err);
+        setError(err.message);
+        toast.error(err.message || "Không thể tải danh sách sản phẩm");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []); // Chỉ chạy một lần khi component mount
+
   // Hàm thêm sản phẩm vào giỏ hàng
   // itemId: ID của sản phẩm cần thêm
   // size: Kích thước của sản phẩm (bắt buộc)
@@ -145,9 +180,11 @@ const ShopContextProvider = (props) => {
     cartItems, //giỏ hàng
     currency, // Đơn vị tiền tệ
     deliveryFee, // Phí vận chuyển
+    error, // Lỗi khi fetch dữ liệu (nếu có)
     formatPrice, // Hàm format giá theo định dạng Việt Nam
     getCartAmount, //tổng tiền các sản phẩm trong giỏ hàng
     getCartCount, //tính tổng số lượng sản phẩm trong giỏ hàng
+    loading, // Trạng thái loading khi fetch dữ liệu
     navigate, // Hàm điều hướng router
     products, // Danh sách tất cả sản phẩm
     search, // Từ khóa tìm kiếm hiện tại
